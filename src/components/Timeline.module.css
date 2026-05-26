@@ -1,0 +1,248 @@
+.section {
+  background: var(--bg);
+  padding: 96px 0;
+  overflow: hidden;
+}
+
+.header {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+  margin-bottom: 60px;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: clamp(22px, 3vw, 32px);
+  color: var(--text-primary);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.trackWrapper {
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  position: relative;
+}
+
+.trackWrapper:active {
+  cursor: grabbing;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  padding: 80px 200px;
+  position: relative;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+/* The horizontal line */
+.track::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #222;
+  transform: translateY(-50%);
+}
+
+.node {
+  position: relative;
+  flex-shrink: 0;
+  margin: 0 60px;
+}
+
+.nodeContent {
+  position: absolute;
+  width: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nodeContent.above {
+  bottom: calc(100% + 24px);
+}
+
+.nodeContent.below {
+  top: calc(100% + 24px);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: var(--bg);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.2s;
+}
+
+.node:hover .dot {
+  transform: scale(1.3);
+}
+
+/* Color coding */
+.dot.military { border-color: #444; background: #444; }
+.dot.education { border-color: var(--accent); background: var(--accent); }
+.dot.development { border-color: #4a9eff; background: #4a9eff; }
+.dot.athletics { border-color: #e8945a; background: #e8945a; }
+
+/* NOW dot */
+.dot.now {
+  width: 16px;
+  height: 16px;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.dot.now::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: nowPulse 1.8s ease-out infinite;
+  opacity: 0;
+}
+
+@keyframes nowPulse {
+  0%  { transform: scale(0.8); opacity: 0.8; }
+  80% { transform: scale(2.4); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.nodeLabel {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  margin-bottom: 3px;
+}
+
+.nodeDate {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.nodeCountdown {
+  font-size: 11px;
+  color: #e8945a;
+  margin-top: 2px;
+  font-family: var(--font-heading);
+}
+
+.nowLabel {
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Future entries dimmed */
+.future .nodeLabel,
+.future .nodeDate {
+  color: var(--text-muted);
+}
+
+.future .dot {
+  opacity: 0.5;
+}
+
+.node.future:hover .nodeLabel,
+.node.future:hover .nodeDate {
+  color: var(--text-primary);
+}
+
+.node.future:hover .dot {
+  opacity: 1;
+}
+
+/* Placeholder / open node */
+.nodePlaceholder .dot {
+  border-style: dashed;
+  border-color: #333;
+  background: transparent;
+}
+
+.nodePlaceholder .nodeLabel {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Easter egg node */
+.easterEgg .nodeLabel {
+  color: #e8945a;
+  font-size: 10px;
+}
+
+/* Type legend */
+.legend {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 40px 0;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 20px;
+  }
+  .legend {
+    padding: 24px 20px 0;
+  }
+  .track {
+    padding: 80px 60px;
+  }
+  .node {
+    margin: 0 48px;
+  }
+  .nodeContent {
+    width: 140px;
+  }
+  .nodeLabel {
+    font-size: 10px;
+  }
+}

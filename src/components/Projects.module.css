@@ -1,0 +1,140 @@
+.section {
+  background: var(--surface-muted);
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  margin-bottom: 40px;
+}
+
+.list {
+  border-top: var(--border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 48px 1fr 100px;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: var(--radius);
+  margin: 0 -12px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.row:hover {
+  background: var(--surface);
+}
+
+.row.dimmed {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.index {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.meta {
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.result {
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 3px 9px;
+  border: var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.03em;
+}
+
+.tag:hover,
+.tag.activeTag {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.thumbnail {
+  width: 80px;
+  height: 56px;
+  background: var(--surface);
+  border: var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbIcon {
+  font-size: 24px;
+  opacity: 0.3;
+}
+
+.visualizerPlaceholder {
+  margin: -8px 0 8px;
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(29, 158, 117, 0.03);
+  color: var(--text-muted);
+  font-size: 13px;
+  gap: 8px;
+}
+
+.visualizerPlaceholder p {
+  font-family: var(--font-heading);
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 36px 1fr;
+  }
+  .thumbnail {
+    display: none;
+  }
+}

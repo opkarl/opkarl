@@ -1,0 +1,22 @@
+.overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.skier {
+  position: absolute;
+  bottom: 20px;
+  left: -200px;
+  animation: skiSweep 2.8s cubic-bezier(0.2, 0, 0.8, 1) forwards;
+}
+
+@keyframes skiSweep {
+  0%   { left: -200px; }
+  100% { left: calc(100% + 200px); }
+}

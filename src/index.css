@@ -1,0 +1,101 @@
+/* Design tokens */
+:root {
+  --bg: #0f0f0f;
+  --surface: #141414;
+  --surface-muted: #1a1a1a;
+  --accent: #1d9e75;
+  --accent-dim: rgba(29, 158, 117, 0.15);
+  --text-primary: #f0f0f0;
+  --text-secondary: #888;
+  --text-muted: #555;
+  --border: 0.5px solid #222;
+  --radius: 6px;
+  --font-heading: 'Space Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Scroll fade-in animation base */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease var(--stagger, 0s), transform 0.6s ease var(--stagger, 0s);
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Pulsing dot */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* Global section padding */
+section {
+  padding: 96px 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: 64px 0;
+  }
+  .container {
+    padding: 0 20px;
+  }
+}

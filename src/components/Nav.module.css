@@ -1,0 +1,117 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-bottom: var(--border);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.nav.scrolled {
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.links a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+  font-family: var(--font-body);
+}
+
+.links a:hover,
+.links a.active {
+  color: var(--accent);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--text-primary);
+  transition: transform 0.25s, opacity 0.25s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+.mobile {
+  display: none;
+  flex-direction: column;
+  padding: 16px 40px 20px;
+  border-top: var(--border);
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.mobile.open {
+  display: flex;
+}
+
+.mobile a {
+  padding: 10px 0;
+  font-size: 15px;
+  color: var(--text-secondary);
+  border-bottom: var(--border);
+  transition: color 0.2s;
+}
+
+.mobile a:hover,
+.mobile a.active {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .links {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .inner {
+    padding: 0 20px;
+  }
+}

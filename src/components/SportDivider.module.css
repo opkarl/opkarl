@@ -1,0 +1,139 @@
+.divider {
+  width: 100%;
+  height: 120px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-top: var(--border);
+  border-bottom: var(--border);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  padding: 0;
+}
+
+.divider.visible {
+  opacity: 1;
+}
+
+.svg {
+  height: 80px;
+  width: auto;
+}
+
+/* Swimmer arm cycle */
+@keyframes swimStroke {
+  0%   { d: path('M10,40 Q25,15 40,25 Q50,30 45,40'); }
+  50%  { d: path('M10,40 Q25,55 40,45 Q50,40 45,40'); }
+  100% { d: path('M10,40 Q25,15 40,25 Q50,30 45,40'); }
+}
+
+@keyframes armForward {
+  0%   { transform: rotate(-30deg); }
+  50%  { transform: rotate(90deg); }
+  100% { transform: rotate(-30deg); }
+}
+
+@keyframes armBack {
+  0%   { transform: rotate(90deg); }
+  50%  { transform: rotate(-30deg); }
+  100% { transform: rotate(90deg); }
+}
+
+@keyframes swimBody {
+  0%, 100% { transform: rotate(-2deg); }
+  50%       { transform: rotate(2deg); }
+}
+
+/* Cyclist leg pedal */
+@keyframes pedalLeft {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pedalRight {
+  0%   { transform: rotate(180deg); }
+  100% { transform: rotate(540deg); }
+}
+
+/* Runner stride */
+@keyframes runLegFront {
+  0%   { transform: rotate(-25deg); }
+  50%  { transform: rotate(35deg); }
+  100% { transform: rotate(-25deg); }
+}
+
+@keyframes runLegBack {
+  0%   { transform: rotate(35deg); }
+  50%  { transform: rotate(-25deg); }
+  100% { transform: rotate(35deg); }
+}
+
+@keyframes runArmFront {
+  0%   { transform: rotate(-20deg); }
+  50%  { transform: rotate(20deg); }
+  100% { transform: rotate(-20deg); }
+}
+
+@keyframes runArmBack {
+  0%   { transform: rotate(20deg); }
+  50%  { transform: rotate(-20deg); }
+  100% { transform: rotate(20deg); }
+}
+
+@keyframes runBounce {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+
+.swimBody {
+  animation: swimBody 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.armForward {
+  animation: armForward 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+
+.armBack {
+  animation: armBack 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 100% 50%;
+}
+
+.pedalGroup {
+  animation: pedalLeft 1s linear infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+.runnerGroup {
+  animation: runBounce 0.5s ease-in-out infinite;
+}
+
+.runLegFront {
+  animation: runLegFront 0.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 0%;
+}
+
+.runLegBack {
+  animation: runLegBack 0.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 0%;
+}
+
+.runArmFront {
+  animation: runArmFront 0.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 0%;
+}
+
+.runArmBack {
+  animation: runArmBack 0.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 0%;
+}
