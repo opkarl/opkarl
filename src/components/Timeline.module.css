@@ -14,7 +14,7 @@
 .label {
   font-size: 11px;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
+  color: var(--accent-warm);
   text-transform: uppercase;
   font-family: var(--font-heading);
   margin-bottom: 12px;
@@ -66,7 +66,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: #222;
+  background: var(--border-color);
   transform: translateY(-50%);
 }
 
@@ -187,7 +187,7 @@
 /* Placeholder / open node */
 .nodePlaceholder .dot {
   border-style: dashed;
-  border-color: #333;
+  border-color: var(--border-color);
   background: transparent;
 }
 

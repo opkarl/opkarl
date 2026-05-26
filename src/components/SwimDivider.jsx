@@ -29,24 +29,20 @@ export default function SwimDivider() {
 
         {/* Swimmer body - side profile, freestyle */}
         <g className={styles.swimBody}>
-          {/* Torso */}
           <ellipse cx="95" cy="45" rx="28" ry="8" fill="#1d9e75" transform="rotate(-8, 95, 45)" />
-          {/* Head */}
           <circle cx="126" cy="42" r="9" fill="#1d9e75" />
-          {/* Cap */}
           <ellipse cx="126" cy="38" rx="8" ry="5" fill="#f0f0f0" />
-          {/* Hips */}
           <ellipse cx="68" cy="47" rx="10" ry="6" fill="#1d9e75" transform="rotate(-8, 68, 47)" />
         </g>
 
-        {/* Front arm (in water, pulling) */}
-        <g className={styles.armForward} style={{ transformOrigin: '125px 44px' }}>
+        {/* Front arm: shoulder (125,44) is top-left of its fill-box → 0% 0% */}
+        <g className={styles.armForward}>
           <line x1="125" y1="44" x2="148" y2="52" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
           <line x1="148" y1="52" x2="158" y2="58" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
         </g>
 
-        {/* Back arm (recovery, out of water) */}
-        <g className={styles.armBack} style={{ transformOrigin: '80px 43px' }}>
+        {/* Back arm: shoulder (80,43) is bottom-right of its fill-box → 100% 100% */}
+        <g className={styles.armBack}>
           <line x1="80" y1="43" x2="58" y2="32" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
           <line x1="58" y1="32" x2="50" y2="38" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
         </g>

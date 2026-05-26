@@ -50,20 +50,14 @@ export default function BikeDivider() {
         <line x1="86" y1="21" x2="146" y2="33" stroke="#e0e0e0" strokeWidth="2.5" />
         <line x1="137" y1="31" x2="150" y2="31" stroke="#e0e0e0" strokeWidth="2" />
 
-        {/* Crank + animated legs */}
+        {/* Crank + pedals — rotate around bottom bracket (100, 65) */}
         <circle cx="100" cy="65" r="5" stroke="#1d9e75" strokeWidth="1.5" />
-        <g className={styles.pedalGroup} style={{ transformOrigin: '100px 65px' }}>
-          {/* Crank arms */}
+        <g className={styles.pedalGroup}>
           <line x1="100" y1="65" x2="110" y2="72" stroke="#1d9e75" strokeWidth="2" />
           <line x1="100" y1="65" x2="90" y2="58" stroke="#1d9e75" strokeWidth="2" />
-          {/* Pedals */}
           <line x1="108" y1="73" x2="114" y2="73" stroke="#f0f0f0" strokeWidth="2" />
           <line x1="88" y1="57" x2="94" y2="57" stroke="#f0f0f0" strokeWidth="2" />
         </g>
-
-        {/* Right leg */}
-        <line x1="86" y1="21" x2="95" y2="55" stroke="#e0e0e0" strokeWidth="2.5" />
-        <line x1="95" y1="55" x2="110" y2="72" stroke="#e0e0e0" strokeWidth="2.5" />
       </svg>
     </div>
   )

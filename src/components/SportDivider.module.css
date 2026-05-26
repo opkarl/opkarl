@@ -23,12 +23,6 @@
 }
 
 /* Swimmer arm cycle */
-@keyframes swimStroke {
-  0%   { d: path('M10,40 Q25,15 40,25 Q50,30 45,40'); }
-  50%  { d: path('M10,40 Q25,55 40,45 Q50,40 45,40'); }
-  100% { d: path('M10,40 Q25,15 40,25 Q50,30 45,40'); }
-}
-
 @keyframes armForward {
   0%   { transform: rotate(-30deg); }
   50%  { transform: rotate(90deg); }
@@ -50,11 +44,6 @@
 @keyframes pedalLeft {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-@keyframes pedalRight {
-  0%   { transform: rotate(180deg); }
-  100% { transform: rotate(540deg); }
 }
 
 /* Runner stride */
@@ -95,19 +84,19 @@
 .armForward {
   animation: armForward 1.4s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 0% 50%;
+  transform-origin: 0% 0%; /* shoulder is top-left of fill-box */
 }
 
 .armBack {
   animation: armBack 1.4s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 100% 50%;
+  transform-origin: 100% 100%; /* shoulder is bottom-right of fill-box */
 }
 
 .pedalGroup {
   animation: pedalLeft 1s linear infinite;
   transform-box: fill-box;
-  transform-origin: 50% 50%;
+  transform-origin: 50% 50%; /* bounding box center ≈ bottom bracket */
 }
 
 .runnerGroup {
@@ -117,23 +106,23 @@
 .runLegFront {
   animation: runLegFront 0.5s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 0% 0%;
+  transform-origin: 0% 0%; /* hip is top-left of fill-box */
 }
 
 .runLegBack {
   animation: runLegBack 0.5s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 0% 0%;
+  transform-origin: 100% 0%; /* hip is top-right of fill-box */
 }
 
 .runArmFront {
   animation: runArmFront 0.5s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 0% 0%;
+  transform-origin: 0% 0%; /* shoulder is top-left of fill-box */
 }
 
 .runArmBack {
   animation: runArmBack 0.5s ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: 0% 0%;
+  transform-origin: 100% 0%; /* shoulder is top-right of fill-box */
 }

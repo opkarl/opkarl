@@ -5,7 +5,7 @@
 .label {
   font-size: 11px;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
+  color: var(--accent-warm);
   text-transform: uppercase;
   font-family: var(--font-heading);
   margin-bottom: 40px;
@@ -23,6 +23,14 @@
   border: var(--border);
   border-radius: var(--radius);
   padding: 28px 24px;
+}
+
+.card:nth-child(1) {
+  border-top: 2px solid var(--accent);
+}
+
+.card:nth-child(2) {
+  border-top: 2px solid var(--accent-warm);
 }
 
 .cardTitle {

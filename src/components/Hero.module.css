@@ -1,53 +1,95 @@
-.hero {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding-top: 60px;
+/* ── Scroll-lock wrapper ─────────────────────────────────────────────
+   200vh total height: 100vh visible hero + 100vh scroll slot.
+   Phases: 0-25% swimmer, 25-50% cyclist, 50-75% runner, 75-100% text.
+   After the slot is consumed the hero un-sticks and page scroll resumes.
+───────────────────────────────────────────────────────────────────── */
+.wrapper {
+  height: 200vh;
 }
 
-.left {
+.hero {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding-top: 60px; /* nav clearance */
+}
+
+/* ── Full-screen image panel ── */
+.visual {
+  width: 100%;
+  height: 100%;
+  background: #161616;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Athletes ── */
+.athlete {
+  position: absolute;
+  will-change: transform;
+}
+
+.cyclist {
+  bottom: 8%;
+  left: 0;
+  width: 180px;
+  transform: translateX(-190px);
+}
+
+.athlete svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Left-side text overlay — upper portion so athletes don't collide ── */
+.overlay {
+  position: absolute;
+  top: 12%;
+  left: 0;
+  width: 46%;
+  padding: 0 52px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 60px 60px 60px 40px;
-  max-width: 600px;
+  gap: 22px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
 }
 
+.overlayVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Text is always on dark terrain */
 .heading {
   font-family: var(--font-heading);
-  font-size: clamp(24px, 3.5vw, 42px);
+  font-size: clamp(20px, 2.8vw, 38px);
   font-weight: 700;
-  line-height: 1.15;
-  color: var(--text-primary);
-  margin-bottom: 20px;
-  opacity: 0;
-  transform: translateY(24px);
-  animation: fadeUp 0.7s ease 0.1s forwards;
+  line-height: 1.18;
+  color: #ededed;
 }
 
 .subheading {
-  font-size: 16px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 36px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 0.7s ease 0.25s forwards;
+  font-size: 15px;
+  color: #909090;
+  line-height: 1.65;
 }
 
 .ctas {
   display: flex;
-  gap: 14px;
-  margin-bottom: 48px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 0.7s ease 0.4s forwards;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .btnFilled {
   display: inline-flex;
   align-items: center;
-  padding: 12px 24px;
+  padding: 11px 22px;
   background: var(--accent);
   color: #fff;
   border-radius: var(--radius);
@@ -65,7 +107,7 @@
 .btnOutline {
   display: inline-flex;
   align-items: center;
-  padding: 12px 24px;
+  padding: 11px 22px;
   border: 1px solid var(--accent);
   color: var(--accent);
   border-radius: var(--radius);
@@ -83,7 +125,7 @@
 .ticker {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .tickerItem {
@@ -91,18 +133,20 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: #787878;
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(10px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-.tickerItem.visible {
-  animation: fadeUp 0.5s ease forwards;
+.tickerVisible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--accent);
   flex-shrink: 0;
@@ -126,90 +170,25 @@
   font-size: 12px;
 }
 
-/* Right panel */
-.right {
-  background: var(--surface);
-  border-left: var(--border);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.parallaxContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.terrain {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  will-change: transform;
-}
-
-.cyclist {
-  position: absolute;
-  bottom: 28%;
-  will-change: transform;
-  width: 220px;
-}
-
-.cyclist svg,
-.terrain svg {
-  width: 100%;
-  height: auto;
-}
-
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes dotPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  50% { transform: scale(1.25); }
 }
 
 @keyframes dotRing {
-  0% { transform: scale(1); opacity: 0.8; }
-  70% { transform: scale(2.5); opacity: 0; }
-  100% { transform: scale(2.5); opacity: 0; }
+  0% { transform: scale(1); opacity: 0.7; }
+  70% { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
 }
 
 @media (max-width: 768px) {
-  .hero {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+  .wrapper { height: 200vh; }
+
+  .overlay {
+    width: 85%;
+    padding: 0 24px;
+    top: 8%;
   }
 
-  .left {
-    padding: 40px 20px;
-    max-width: 100%;
-    order: 2;
-  }
-
-  .right {
-    order: 1;
-    border-left: none;
-    border-bottom: var(--border);
-    min-height: 260px;
-    height: 260px;
-  }
-
-  .cyclist {
-    width: 140px;
-    position: static;
-    transform: none !important;
-  }
-
-  .terrain {
-    display: none;
-  }
+  .cyclist { width: 130px; }
 }

@@ -5,7 +5,7 @@
 .label {
   font-size: 11px;
   letter-spacing: 0.12em;
-  color: var(--text-muted);
+  color: var(--accent);
   text-transform: uppercase;
   font-family: var(--font-heading);
   margin-bottom: 24px;
@@ -52,7 +52,7 @@
 
 .divider {
   height: 1px;
-  background: #1e1e1e;
+  background: var(--border-color);
   margin-bottom: 24px;
 }
 

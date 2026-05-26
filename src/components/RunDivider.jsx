@@ -24,39 +24,35 @@ export default function RunDivider() {
       role="img"
     >
       <svg className={styles.svg} viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <g className={styles.runnerGroup} style={{ transformOrigin: '60px 45px' }}>
-          {/* Head */}
+        <g className={styles.runnerGroup}>
           <circle cx="65" cy="14" r="8" fill="#1d9e75" />
-
-          {/* Torso */}
           <line x1="65" y1="22" x2="62" y2="48" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
 
-          {/* Back arm */}
-          <g className={styles.runArmBack} style={{ transformOrigin: '65px 28px' }}>
+          {/* Back arm: shoulder (65,28) is top-right of its fill-box → 100% 0% */}
+          <g className={styles.runArmBack}>
             <line x1="65" y1="28" x2="50" y2="38" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
             <line x1="50" y1="38" x2="44" y2="34" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
           </g>
 
-          {/* Front arm */}
-          <g className={styles.runArmFront} style={{ transformOrigin: '65px 28px' }}>
+          {/* Front arm: shoulder (65,28) is top-left of its fill-box → 0% 0% */}
+          <g className={styles.runArmFront}>
             <line x1="65" y1="28" x2="78" y2="35" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
             <line x1="78" y1="35" x2="84" y2="30" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
           </g>
 
-          {/* Back leg */}
-          <g className={styles.runLegBack} style={{ transformOrigin: '62px 48px' }}>
+          {/* Back leg: hip (62,48) is top-right of its fill-box → 100% 0% */}
+          <g className={styles.runLegBack}>
             <line x1="62" y1="48" x2="50" y2="64" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
             <line x1="50" y1="64" x2="42" y2="76" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
           </g>
 
-          {/* Front leg */}
-          <g className={styles.runLegFront} style={{ transformOrigin: '62px 48px' }}>
+          {/* Front leg: hip (62,48) is top-left of its fill-box → 0% 0% */}
+          <g className={styles.runLegFront}>
             <line x1="62" y1="48" x2="74" y2="60" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
             <line x1="74" y1="60" x2="80" y2="74" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* Ground */}
         <line x1="0" y1="78" x2="120" y2="78" stroke="#222" strokeWidth="1" />
       </svg>
     </div>

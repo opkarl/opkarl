@@ -31,6 +31,9 @@
   padding: 28px 24px;
 }
 
+.card:nth-child(2) { border-top-color: var(--accent-warm); }
+.card:nth-child(3) { border-top-color: var(--accent-blue); }
+
 .cardTitle {
   font-family: var(--font-heading);
   font-size: 13px;

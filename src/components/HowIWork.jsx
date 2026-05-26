@@ -3,21 +3,9 @@ import { useFadeIn } from '../hooks/useFadeIn'
 import styles from './HowIWork.module.css'
 
 const PRINCIPLES = [
-  {
-    title: '[PRINCIPLE TITLE]',
-    // TODO: Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.
-    body: '[Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.]',
-  },
-  {
-    title: '[PRINCIPLE TITLE]',
-    // TODO: Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.
-    body: '[Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.]',
-  },
-  {
-    title: '[PRINCIPLE TITLE]',
-    // TODO: Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.
-    body: '[Karl-Fredrik to fill in — write this in your own voice. See portfolio plan for guidance.]',
-  },
+  { title: '[PRINCIPLE TITLE]', description: 'description' },
+  { title: '[PRINCIPLE TITLE]', description: 'description' },
+  { title: '[PRINCIPLE TITLE]', description: 'description' },
 ]
 
 export default function HowIWork() {
@@ -36,7 +24,7 @@ export default function HowIWork() {
               className={`${styles.card} fade-up`}
             >
               <h3 className={styles.cardTitle}>{p.title}</h3>
-              <p className={styles.cardBody}>{p.body}</p>
+              <p className={styles.cardBody}>{p.description}</p>
             </div>
           ))}
         </div>
