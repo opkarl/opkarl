@@ -1,6 +1,13 @@
 import { useState, useRef } from 'react'
 import { useFadeIn } from '../hooks/useFadeIn'
 import styles from './Projects.module.css'
+import Pathfinder from './pathfinder/Pathfinder'
+import SortingVisualizer from './sorting/SortingVisualizer'
+
+const DEMOS = [
+  { label: 'Pathfinding', component: <Pathfinder /> },
+  { label: 'Sorting',     component: <SortingVisualizer /> },
+]
 
 // if you're reading this, you're exactly the kind of person i want to work with.
 
@@ -46,6 +53,7 @@ const PROJECTS = [
 
 export default function Projects() {
   const [activeTag, setActiveTag] = useState(null)
+  const [demoIndex, setDemoIndex] = useState(0)
   const ref = useRef(null)
   useFadeIn(ref)
 
@@ -109,13 +117,43 @@ export default function Projects() {
                 </div>
 
                 {project.showVisualizer && (
-                  <div className={`${styles.visualizerPlaceholder} fade-up`}>
-                    {/* PATHFINDING VISUALIZER — embed or iframe here */}
-                    {/* TODO: if user finds optimal path with no walls, trigger something small. */}
-                    <p>[ Interactive pathfinding visualizer — to be embedded ]</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-body)' }}>
-                      A* · Dijkstra · live grid
-                    </p>
+                  <div className={`${styles.demoCarousel} fade-up`}>
+                    <button
+                      className={styles.demoArrow}
+                      onClick={() => setDemoIndex(i => (i - 1 + DEMOS.length) % DEMOS.length)}
+                      aria-label="Previous demo"
+                    >
+                      ‹
+                    </button>
+                    <div className={styles.demoWindow}>
+                      <div
+                        className={styles.demoTrack}
+                        style={{ transform: `translateX(${-demoIndex * 100}%)` }}
+                      >
+                        {DEMOS.map((demo, di) => (
+                          <div key={di} className={styles.demoSlide}>
+                            {demo.component}
+                          </div>
+                        ))}
+                      </div>
+                      <div className={styles.demoDots}>
+                        {DEMOS.map((demo, di) => (
+                          <button
+                            key={di}
+                            className={`${styles.demoDot} ${demoIndex === di ? styles.demoDotActive : ''}`}
+                            onClick={() => setDemoIndex(di)}
+                            aria-label={`Switch to ${demo.label}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      className={styles.demoArrow}
+                      onClick={() => setDemoIndex(i => (i + 1) % DEMOS.length)}
+                      aria-label="Next demo"
+                    >
+                      ›
+                    </button>
                   </div>
                 )}
               </div>
