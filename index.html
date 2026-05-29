@@ -11,6 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <!-- Set data-theme before React mounts to avoid a flash of the wrong theme -->
+    <script>
+      (function () {
+        var t = localStorage.getItem('kf-theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

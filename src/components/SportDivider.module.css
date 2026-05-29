@@ -22,19 +22,6 @@
   width: auto;
 }
 
-/* Swimmer arm cycle */
-@keyframes armForward {
-  0%   { transform: rotate(-30deg); }
-  50%  { transform: rotate(90deg); }
-  100% { transform: rotate(-30deg); }
-}
-
-@keyframes armBack {
-  0%   { transform: rotate(90deg); }
-  50%  { transform: rotate(-30deg); }
-  100% { transform: rotate(90deg); }
-}
-
 @keyframes swimBody {
   0%, 100% { transform: rotate(-2deg); }
   50%       { transform: rotate(2deg); }
@@ -76,21 +63,49 @@
   50%       { transform: translateY(-3px); }
 }
 
+@keyframes swimFlutterUp {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes swimFlutterDown {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(5px); }
+}
+
 .swimBody {
   animation: swimBody 1.4s ease-in-out infinite;
   transform-origin: center;
 }
 
-.armForward {
-  animation: armForward 1.4s ease-in-out infinite;
-  transform-box: fill-box;
-  transform-origin: 0% 0%; /* shoulder is top-left of fill-box */
+/* Both arms rotate a full circle around the shoulder pivot (fill-box 0% 0%).
+   Arm B is delayed by half the period so they stay 180° apart — one pulling,
+   one recovering — exactly as in a real freestyle stroke. */
+@keyframes swimArmCycle {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.armBack {
-  animation: armBack 1.4s ease-in-out infinite;
+.swimArmA {
+  animation: swimArmCycle 1.4s linear infinite;
   transform-box: fill-box;
-  transform-origin: 100% 100%; /* shoulder is bottom-right of fill-box */
+  transform-origin: 0% 0%;
+}
+
+.swimArmB {
+  animation: swimArmCycle 1.4s linear infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 0%;
+  animation-delay: -0.7s;
+}
+
+.swimLegUp {
+  animation: swimFlutterUp 0.55s ease-in-out infinite;
+}
+
+.swimLegDown {
+  animation: swimFlutterDown 0.55s ease-in-out infinite;
+  animation-delay: 0.275s;
 }
 
 .pedalGroup {

@@ -18,9 +18,9 @@ export default function HowIWork() {
         <p className={`${styles.label} fade-up`}>Approach</p>
         <h2 className={`${styles.heading} fade-up`}>How I work</h2>
         <div className={styles.grid}>
-          {PRINCIPLES.map((p, i) => (
+          {PRINCIPLES.map((p) => (
             <div
-              key={i}
+              key={p.title}
               className={`${styles.card} fade-up`}
             >
               <h3 className={styles.cardTitle}>{p.title}</h3>

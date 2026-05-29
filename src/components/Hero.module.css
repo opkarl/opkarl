@@ -1,6 +1,6 @@
 /* ── Scroll-lock wrapper ─────────────────────────────────────────────
    200vh total height: 100vh visible hero + 100vh scroll slot.
-   Phases: 0-25% swimmer, 25-50% cyclist, 50-75% runner, 75-100% text.
+   0–75%: cyclist rides across. 75–100%: overlay text fades in.
    After the slot is consumed the hero un-sticks and page scroll resumes.
 ───────────────────────────────────────────────────────────────────── */
 .wrapper {
@@ -18,7 +18,7 @@
 .visual {
   width: 100%;
   height: 100%;
-  background: #161616;
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }
@@ -65,18 +65,17 @@
   pointer-events: auto;
 }
 
-/* Text is always on dark terrain */
 .heading {
   font-family: var(--font-heading);
   font-size: clamp(20px, 2.8vw, 38px);
   font-weight: 700;
   line-height: 1.18;
-  color: #ededed;
+  color: var(--text-primary);
 }
 
 .subheading {
   font-size: 15px;
-  color: #909090;
+  color: var(--text-secondary);
   line-height: 1.65;
 }
 
@@ -133,7 +132,7 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: #787878;
+  color: var(--text-secondary);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.45s ease, transform 0.45s ease;
@@ -182,8 +181,6 @@
 }
 
 @media (max-width: 768px) {
-  .wrapper { height: 200vh; }
-
   .overlay {
     width: 85%;
     padding: 0 24px;

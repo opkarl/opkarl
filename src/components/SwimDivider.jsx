@@ -1,20 +1,8 @@
-import { useRef, useEffect, useState } from 'react'
 import styles from './SportDivider.module.css'
+import { useVisible } from '../hooks/useVisible'
 
 export default function SwimDivider() {
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect() } },
-      { threshold: 0.2 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
+  const [ref, visible] = useVisible()
 
   return (
     <div
@@ -23,37 +11,43 @@ export default function SwimDivider() {
       aria-label="Swim section divider"
       role="img"
     >
-      <svg className={styles.svg} viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-        {/* Water line */}
-        <line x1="0" y1="55" x2="200" y2="55" stroke="#222" strokeWidth="1" />
+      <svg className={styles.svg} viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg" fill="none">
+        {/* Water surface */}
+        <line x1="0" y1="52" x2="220" y2="52" stroke="#1d9e75" strokeWidth="1" opacity="0.35" />
+        <path d="M15,52 Q25,48 35,52 Q45,56 55,52" fill="none" stroke="#1d9e75" strokeWidth="1" opacity="0.25" />
+        <path d="M75,52 Q85,48 95,52 Q105,56 115,52" fill="none" stroke="#1d9e75" strokeWidth="1" opacity="0.2" />
+        <path d="M168,52 Q178,48 188,52 Q198,56 208,52" fill="none" stroke="#1d9e75" strokeWidth="1" opacity="0.18" />
 
-        {/* Swimmer body - side profile, freestyle */}
         <g className={styles.swimBody}>
-          <ellipse cx="95" cy="45" rx="28" ry="8" fill="#1d9e75" transform="rotate(-8, 95, 45)" />
-          <circle cx="126" cy="42" r="9" fill="#1d9e75" />
-          <ellipse cx="126" cy="38" rx="8" ry="5" fill="#f0f0f0" />
-          <ellipse cx="68" cy="47" rx="10" ry="6" fill="#1d9e75" transform="rotate(-8, 68, 47)" />
+          {/* Head — bottom edge touches shoulder */}
+          <circle cx="155" cy="44" r="8" fill="#1d9e75" />
+
+          {/* Torso — shoulder at (147,48), hip at (72,52) */}
+          <line x1="147" y1="48" x2="72" y2="52" stroke="#1d9e75" strokeWidth="5" strokeLinecap="round" />
+
+          {/* Arm A — rotates full 360° around shoulder (147,48).
+              Tip starts forward-down (water entry). fill-box 0% 0% = (147,48). */}
+          <g className={styles.swimArmA}>
+            <line x1="147" y1="48" x2="180" y2="67" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
+          </g>
+
+          {/* Arm B — identical geometry, 180° out of phase = recovery position at t=0 */}
+          <g className={styles.swimArmB}>
+            <line x1="147" y1="48" x2="180" y2="67" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
+          </g>
+
+          {/* Leg A — flutter up, pivots from hip (72,52) */}
+          <g className={styles.swimLegUp}>
+            <line x1="72" y1="52" x2="50" y2="44" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
+            <line x1="50" y1="44" x2="36" y2="42" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
+          </g>
+
+          {/* Leg B — flutter down */}
+          <g className={styles.swimLegDown}>
+            <line x1="72" y1="52" x2="52" y2="60" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
+            <line x1="52" y1="60" x2="38" y2="63" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
+          </g>
         </g>
-
-        {/* Front arm: shoulder (125,44) is top-left of its fill-box → 0% 0% */}
-        <g className={styles.armForward}>
-          <line x1="125" y1="44" x2="148" y2="52" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
-          <line x1="148" y1="52" x2="158" y2="58" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
-        </g>
-
-        {/* Back arm: shoulder (80,43) is bottom-right of its fill-box → 100% 100% */}
-        <g className={styles.armBack}>
-          <line x1="80" y1="43" x2="58" y2="32" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
-          <line x1="58" y1="32" x2="50" y2="38" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
-        </g>
-
-        {/* Kick (legs) */}
-        <line x1="68" y1="49" x2="45" y2="52" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
-        <line x1="68" y1="49" x2="44" y2="46" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
-
-        {/* Water ripples */}
-        <path d="M30,58 Q45,54 60,58 Q75,62 90,58" fill="none" stroke="#1d9e75" strokeWidth="1" opacity="0.3" />
-        <path d="M100,60 Q115,56 130,60 Q145,64 160,60" fill="none" stroke="#1d9e75" strokeWidth="1" opacity="0.2" />
       </svg>
     </div>
   )

@@ -51,19 +51,17 @@ const PROJECTS = [
   },
 ]
 
+const ALL_TAGS = [...new Set(PROJECTS.flatMap(p => p.tags))]
+
 export default function Projects() {
   const [activeTag, setActiveTag] = useState(null)
   const [demoIndex, setDemoIndex] = useState(0)
   const ref = useRef(null)
   useFadeIn(ref)
 
-  const allTags = [...new Set(PROJECTS.flatMap(p => p.tags))]
-
   const handleRowClick = (project) => {
     if (project.url) {
       window.open(project.url, '_blank', 'noopener,noreferrer')
-    } else {
-      console.log(`Project: ${project.title}`)
     }
   }
 

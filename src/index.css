@@ -22,11 +22,16 @@
   --radius: 6px;
   --font-heading: 'Space Mono', monospace;
   --font-body:    'Inter', sans-serif;
+
+  --terrain-far:    #242424;
+  --terrain-mid:    #282828;
+  --terrain-ground: #2e2e2e;
+  --terrain-road:   #363636;
 }
 
-/* ── Design tokens: light ── */
+/* ── Design tokens: light (auto, follows OS unless manually overridden) ── */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme="dark"]) {
     --bg:             #f0ebe3;
     --surface:        #e6dfd5;
     --surface-muted:  #dbd3c8;
@@ -45,8 +50,41 @@
 
     --nav-bg:         rgba(232, 225, 216, 0.9);
     --nav-mobile-bg:  rgba(228, 221, 212, 0.97);
+
+    --terrain-far:    #d4ccc2;
+    --terrain-mid:    #c8c0b6;
+    --terrain-ground: #bdb4a8;
+    --terrain-road:   #b4aba0;
   }
 }
+
+/* ── Manual light override (needed when OS is dark but user picks light) ── */
+:root[data-theme="light"] {
+  --bg:             #f0ebe3;
+  --surface:        #e6dfd5;
+  --surface-muted:  #dbd3c8;
+
+  --accent:         #187a5e;
+  --accent-warm:    #c05c1e;
+  --accent-blue:    #2d6ebc;
+  --accent-dim:     rgba(24, 122, 94, 0.1);
+
+  --text-primary:   #1a1a1a;
+  --text-secondary: #5a5550;
+  --text-muted:     #8a8480;
+
+  --border-color:   #c0b8af;
+  --border:         0.5px solid var(--border-color);
+
+  --nav-bg:         rgba(232, 225, 216, 0.9);
+  --nav-mobile-bg:  rgba(228, 221, 212, 0.97);
+
+  --terrain-far:    #d4ccc2;
+  --terrain-mid:    #c8c0b6;
+  --terrain-ground: #bdb4a8;
+  --terrain-road:   #b4aba0;
+}
+/* [data-theme="dark"] not needed — :root defaults to dark */
 
 *, *::before, *::after {
   box-sizing: border-box;

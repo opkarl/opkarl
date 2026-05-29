@@ -1,8 +1,8 @@
 .cell {
   width: 32px;
   height: 32px;
-  border: 1px solid #2e2e2e;
-  background: #1e1e1e;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
   cursor: pointer;
   padding: 0;
   user-select: none;
@@ -17,9 +17,9 @@
   cursor: grabbing;
 }
 
-.cell[data-type="start"] { background: #20ae82; }
-.cell[data-type="end"]   { background: #e8945a; }
-.cell[data-type="wall"]  { background: #ededed; }
-.cell[data-type="empty"]   { background: #1e1e1e; }
+.cell[data-type="start"]   { background: #20ae82; }
+.cell[data-type="end"]     { background: #e8945a; }
+.cell[data-type="wall"]    { background: var(--text-primary); }
+.cell[data-type="empty"]   { background: var(--surface); }
 .cell[data-type="visited"] { background: var(--accent-blue); opacity: 0.7; }
 .cell[data-type="path"]    { background: var(--accent-warm); }

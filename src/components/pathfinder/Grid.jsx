@@ -1,12 +1,12 @@
-import Cell from './Cell';
-import { CellType } from './CellType';
-import styles from './Grid.module.css';
+import Cell from './Cell'
+import { CellType } from './CellType'
+import styles from './Grid.module.css'
 
 export default function Grid({ cells, onCellMouseDown, onCellMouseEnter }) {
   return (
     <div className={styles.grid} onContextMenu={e => e.preventDefault()}>
       {cells.map((row, rowIndex) => (
-        <div key={rowIndex} style={{ display: 'flex' }}>
+        <div key={rowIndex} className={styles.row}>
           {row.map((cell, colIndex) => (
             <Cell
               key={colIndex}
@@ -19,5 +19,5 @@ export default function Grid({ cells, onCellMouseDown, onCellMouseEnter }) {
         </div>
       ))}
     </div>
-  );
+  )
 }

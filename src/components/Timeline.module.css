@@ -1,14 +1,14 @@
+/* ── Section ───────────────────────────────────────────────────────────────── */
+
 .section {
   background: var(--bg);
   padding: 96px 0;
-  overflow: hidden;
 }
 
 .header {
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 auto 60px;
   padding: 0 40px;
-  margin-bottom: 60px;
 }
 
 .label {
@@ -32,177 +32,221 @@
   font-style: italic;
 }
 
+/* ── Scrollable wrapper ─────────────────────────────────────────────────────── */
+
 .trackWrapper {
   width: 100%;
-  overflow: hidden;
-  cursor: grab;
-  user-select: none;
-  position: relative;
-}
-
-.trackWrapper:active {
-  cursor: grabbing;
-}
-
-.track {
-  display: flex;
-  align-items: center;
-  padding: 80px 200px;
-  position: relative;
   overflow-x: scroll;
+  overflow-y: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  cursor: grab;
+  user-select: none;
 }
 
-.track::-webkit-scrollbar {
-  display: none;
+.trackWrapper::-webkit-scrollbar { display: none; }
+.trackWrapper:active { cursor: grabbing; }
+
+/* Absolutely-positioned canvas: all children use position:absolute */
+.canvas {
+  position: relative;
 }
 
-/* The horizontal line */
-.track::before {
-  content: '';
+/* ── Axis ──────────────────────────────────────────────────────────────────── */
+
+.axis {
   position: absolute;
-  top: 50%;
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--border-color);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-50%);
 }
 
-.node {
-  position: relative;
-  flex-shrink: 0;
-  margin: 0 60px;
-}
+/* ── Year ruler ────────────────────────────────────────────────────────────── */
 
-.nodeContent {
+.yearMarker {
   position: absolute;
-  width: 200px;
-  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.yearTick {
+  width: 1px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.14);
+  margin: 0 auto;
+}
+
+.yearDecade .yearTick {
+  height: 13px;
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.yearLabel {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 5px;
+  opacity: 0.5;
+}
+
+.yearDecade .yearLabel {
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+/* ── NOW marker ────────────────────────────────────────────────────────────── */
+
+.nowMarker {
+  position: absolute;
   transform: translateX(-50%);
+  z-index: 10;
 }
 
-.nodeContent.above {
-  bottom: calc(100% + 24px);
-}
-
-.nodeContent.below {
-  top: calc(100% + 24px);
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
+.nowDot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  border: 2px solid;
-  background: var(--bg);
-  position: relative;
-  z-index: 2;
-  transition: transform 0.2s;
-}
-
-.node:hover .dot {
-  transform: scale(1.3);
-}
-
-/* Color coding */
-.dot.military { border-color: #444; background: #444; }
-.dot.education { border-color: var(--accent); background: var(--accent); }
-.dot.development { border-color: #4a9eff; background: #4a9eff; }
-.dot.athletics { border-color: #e8945a; background: #e8945a; }
-
-/* NOW dot */
-.dot.now {
-  width: 16px;
-  height: 16px;
-  border-color: var(--accent);
   background: var(--accent);
+  margin: 0 auto;
+  transform: translateY(-50%);
+  position: relative;
 }
 
-.dot.now::before {
+.nowDot::before {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
-  border: 2px solid var(--accent);
+  border: 1.5px solid var(--accent);
   animation: nowPulse 1.8s ease-out infinite;
   opacity: 0;
 }
 
 @keyframes nowPulse {
-  0%  { transform: scale(0.8); opacity: 0.8; }
-  80% { transform: scale(2.4); opacity: 0; }
-  100% { opacity: 0; }
-}
-
-.nodeLabel {
-  font-family: var(--font-heading);
-  font-size: 11px;
-  color: var(--text-primary);
-  white-space: nowrap;
-  margin-bottom: 3px;
-}
-
-.nodeDate {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.nodeCountdown {
-  font-size: 11px;
-  color: #e8945a;
-  margin-top: 2px;
-  font-family: var(--font-heading);
+  0%  { transform: scale(0.8); opacity: 0.7; }
+  80% { transform: scale(2.2); opacity: 0;   }
+  100%{ opacity: 0; }
 }
 
 .nowLabel {
-  font-size: 10px;
+  display: block;
+  font-size: 9px;
+  font-family: var(--font-heading);
   color: var(--accent);
-  letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-top: 4px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 8px;
 }
 
-/* Future entries dimmed */
-.future .nodeLabel,
-.future .nodeDate {
-  color: var(--text-muted);
+/* ── Connector (label → span) ──────────────────────────────────────────────── */
+
+.labelLine {
+  position: absolute;
+  width: 1px;
+  opacity: 0.22;
+  pointer-events: none;
 }
 
-.future .dot {
-  opacity: 0.5;
+/* ── Span line (the coloured segment near the axis) ────────────────────────── */
+
+.span {
+  position: absolute;
+  height: 4px;
+  background: var(--span-color);
+  border-radius: 2px;
+  opacity: 0.75;
+  cursor: default;
+  transition: opacity 0.15s;
+  z-index: 5;
 }
 
-.node.future:hover .nodeLabel,
-.node.future:hover .nodeDate {
-  color: var(--text-primary);
-}
-
-.node.future:hover .dot {
+.span:hover {
   opacity: 1;
 }
 
-/* Placeholder / open node */
-.nodePlaceholder .dot {
-  border-style: dashed;
-  border-color: var(--border-color);
-  background: transparent;
+/* Future spans: dashed appearance via repeating gradient */
+.spanFuture {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--span-color) 0,
+    var(--span-color) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  background-color: transparent;
+  opacity: 0.45;
 }
 
-.nodePlaceholder .nodeLabel {
-  color: var(--text-muted);
+.spanFuture:hover {
+  opacity: 0.75;
+}
+
+/* Easter-egg span: near-invisible until parent group is hovered */
+.spanEgg {
+  opacity: 0.15;
+  border-radius: 50%;
+}
+
+.spanEgg:hover {
+  opacity: 0.6;
+}
+
+/* ── Event label (plain coloured text) ─────────────────────────────────────── */
+
+.eventLabel {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  white-space: nowrap;
+  /* centred horizontally over `left` via transform */
+  transform: translateX(-50%);
+  cursor: default;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+  letter-spacing: 0.02em;
+  z-index: 5;
+}
+
+.eventLabel:hover {
+  opacity: 1;
+}
+
+.labelFuture {
+  opacity: 0.38;
+}
+
+.labelFuture:hover {
+  opacity: 0.72;
+}
+
+.labelPlaceholder {
   font-style: italic;
 }
 
-/* Easter egg node */
-.easterEgg .nodeLabel {
-  color: #e8945a;
+/* Easter-egg label: barely visible until hovered */
+.labelEgg {
+  font-size: 12px;
+  opacity: 0.18;
+}
+
+.labelEgg:hover {
+  opacity: 0.8;
+}
+
+.countdown {
+  opacity: 0.65;
   font-size: 10px;
 }
 
-/* Type legend */
+/* ── Legend ────────────────────────────────────────────────────────────────── */
+
 .legend {
   max-width: 1100px;
   margin: 0 auto;
@@ -215,16 +259,67 @@
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 11px;
   color: var(--text-muted);
 }
 
-.legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.legendSwatch {
+  display: block;
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
+
+/* ── Tooltip ───────────────────────────────────────────────────────────────── */
+
+.tooltip {
+  background: var(--bg, #0e0e0e);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-width: 175px;
+  max-width: 240px;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55);
+}
+
+.tooltipHeader {
+  border-left: 3px solid;
+  padding-left: 9px;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipName {
+  font-size: 12px;
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.tooltipCat {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tooltipDate {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.tooltipDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Mobile ────────────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .header {
@@ -232,17 +327,6 @@
   }
   .legend {
     padding: 24px 20px 0;
-  }
-  .track {
-    padding: 80px 60px;
-  }
-  .node {
-    margin: 0 48px;
-  }
-  .nodeContent {
-    width: 140px;
-  }
-  .nodeLabel {
-    font-size: 10px;
+    gap: 14px;
   }
 }

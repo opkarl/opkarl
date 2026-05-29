@@ -73,7 +73,6 @@ export default function Contact() {
           <span className={styles.footerMeta}>
             Oslo, Norway · Open to opportunities in Norway + remote
           </span>
-          {/* manually updated */}
           <span className={styles.footerLive}>
             Currently building: portfolio
           </span>

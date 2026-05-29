@@ -1,11 +1,1 @@
-
-
-.row   { display: flex; }
-.cell  { width: 32px; height: 32px; }
-
-.cell[data-type="start"] { background: green; }
-.cell[data-type="end"]   { background: red; }
-.cell[data-type="wall"]  { background: black; }
-.cell[data-type="empty"] { background: white; }
-.cell[data-type="visited"] { background: lightblue; }
-.cell[data-type="path"] { background: yellow; }
+.row { display: flex; }

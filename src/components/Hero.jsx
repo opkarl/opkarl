@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styles from './Hero.module.css'
-
-function getRaceCountdown() {
-  const now = new Date()
-  let raceDate = new Date(now.getFullYear(), 5, 28)
-  if (now > raceDate) raceDate = new Date(now.getFullYear() + 1, 5, 28)
-  return Math.ceil((raceDate - now) / (1000 * 60 * 60 * 24))
-}
+import { getRaceCountdown } from '../data/timelineData'
 
 const TICKER_ITEMS = [
   { text: 'Oslo, Norway' },
@@ -101,7 +95,7 @@ export default function Hero() {
                 <div key={i} className={`${styles.tickerItem} ${tickerVisible[i] ? styles.tickerVisible : ''}`}>
                   <span className={styles.dot} aria-hidden="true" />
                   {item.key === 'race'
-                    ? <span>Race day: <span className={styles.countdown}>{daysLeft} days</span> until June 28</span>
+                    ? <span>Race day:{daysLeft != null ? <> <span className={styles.countdown}>{daysLeft} days</span> to go</> : ' June 28 ✓'}</span>
                     : <span>{item.text}</span>}
                 </div>
               ))}
@@ -121,10 +115,10 @@ function TerrainSVG() {
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMax slice"
     >
-      <polygon points="0,300 120,100 220,180 340,60 460,160 580,80 700,140 820,50 900,120 900,300" fill="#181818" />
-      <polygon points="0,300 80,220 200,170 350,200 500,160 650,190 800,155 900,180 900,300" fill="#1a1a1a" />
-      <rect x="0" y="270" width="900" height="30" fill="#1e1e1e" />
-      <rect x="0" y="272" width="900" height="6" fill="#252525" />
+      <polygon points="0,300 120,100 220,180 340,60 460,160 580,80 700,140 820,50 900,120 900,300" style={{ fill: 'var(--terrain-far)' }} />
+      <polygon points="0,300 80,220 200,170 350,200 500,160 650,190 800,155 900,180 900,300" style={{ fill: 'var(--terrain-mid)' }} />
+      <rect x="0" y="270" width="900" height="30" style={{ fill: 'var(--terrain-ground)' }} />
+      <rect x="0" y="272" width="900" height="6" style={{ fill: 'var(--terrain-road)' }} />
     </svg>
   )
 }

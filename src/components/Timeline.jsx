@@ -1,189 +1,164 @@
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './Timeline.module.css'
+import {
+  EVENTS,
+  PIXELS_PER_YEAR,
+  EPOCH_DATE,
+  END_DATE,
+  CATEGORY_COLORS,
+  CATEGORY_LABELS,
+  LEGEND_CATEGORIES,
+  getRaceCountdown,
+} from '../data/timelineData'
 
-function getRaceCountdown() {
-  const now = new Date()
-  let raceDate = new Date(now.getFullYear(), 5, 28)
-  if (now > raceDate) raceDate = new Date(now.getFullYear() + 1, 5, 28)
-  return Math.ceil((raceDate - now) / (1000 * 60 * 60 * 24))
+// ─── Layout constants ─────────────────────────────────────────────────────────
+
+const MS_PER_YEAR  = 365.25 * 24 * 60 * 60 * 1000
+const CANVAS_PAD   = 240   // horizontal padding left/right (px)
+const AXIS_Y       = 175   // px from canvas top to axis centre
+const SPAN_H       = 4     // thickness of each span line (px)
+const SPAN_MARGIN  = 2     // gap between axis centre and the inner span edge (px)
+const SPAN_LAYER   = 3     // gap between above-1 and above-2 span lines (px)
+const MIN_SPAN_W   = 12    // minimum span width for single-day events (px)
+const LABEL_HALF   = 8     // assumed half-height of label text (px)
+
+// Y of the top of each span line (drawn as a thin coloured horizontal rect)
+const SPAN_TOP = {
+  'above-1': AXIS_Y - SPAN_MARGIN - SPAN_H,                         // 169
+  'above-2': AXIS_Y - SPAN_MARGIN - SPAN_H - SPAN_LAYER - SPAN_H,  // 162
+  'below-1': AXIS_Y + SPAN_MARGIN,                                   // 177
+  'below-2': AXIS_Y + SPAN_MARGIN + SPAN_H + SPAN_LAYER,            // 184
 }
 
-const ENTRIES = [
-  // Hidden easter egg — drag way left to find it
-  {
-    id: 'egg',
-    label: 'Karl-Fredrik learns that falling\nis also part of the plan.',
-    date: '~2005',
-    type: 'athletics',
-    position: 'above',
-    isEasterEgg: true,
-  },
-  // TODO: real dates for Air Force service
-  {
-    id: 'af',
-    label: 'Royal Norwegian Air Force',
-    date: '2021 – 2022', // TODO: real dates
-    type: 'military',
-    position: 'above',
-  },
-  {
-    id: 'uib',
-    label: 'UiB Computer Technology begins',
-    date: '2022',
-    type: 'education',
-    position: 'below',
-  },
-  {
-    id: 'ta1',
-    label: 'Teaching Assistant — Sem. 1',
-    date: '2023',
-    type: 'development',
-    position: 'above',
-  },
-  {
-    id: 'ta2',
-    label: 'Teaching Assistant — Sem. 2',
-    date: '2024',
-    type: 'development',
-    position: 'below',
-  },
-  {
-    id: 'bekk',
-    label: 'Bekk / VG Competition',
-    date: '2024',
-    type: 'development',
-    position: 'above',
-  },
-  {
-    id: 'now',
-    label: 'You are here',
-    date: 'Today',
-    type: 'now',
-    position: 'below',
-  },
-  {
-    id: 'tri',
-    label: 'Olympic Triathlon — Race Day',
-    date: 'June 28, 2025',
-    type: 'athletics',
-    position: 'above',
-    isFuture: true,
-    showCountdown: true,
-  },
-  {
-    id: 'internship',
-    label: '[ internship? ]',
-    date: '—',
-    type: 'development',
-    position: 'below',
-    isFuture: true,
-    isPlaceholder: true,
-  },
-]
-
-const TYPE_COLORS = {
-  military: '#444',
-  education: '#1d9e75',
-  development: '#4a9eff',
-  athletics: '#e8945a',
+// Y of the vertical centre of the text label for each track
+const LABEL_CY = {
+  'above-1': AXIS_Y - 70,   // 105
+  'above-2': AXIS_Y - 120,  //  55
+  'below-1': AXIS_Y + 70,   // 245
+  'below-2': AXIS_Y + 120,  // 295
 }
+
+const CANVAS_HEIGHT = AXIS_Y + 120 + LABEL_HALF + 40  // ~343 → pad to 360
+const CANVAS_WIDTH  = dateToX(END_DATE) + CANVAS_PAD
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+
+function dateToX(date) {
+  const d = typeof date === 'string' ? new Date(date) : date
+  return CANVAS_PAD + ((d - EPOCH_DATE) / MS_PER_YEAR) * PIXELS_PER_YEAR
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return 'Present'
+  return new Date(dateStr).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' })
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Timeline() {
-  const trackRef = useRef(null)
+  const trackRef   = useRef(null)
   const isDragging = useRef(false)
-  const startX = useRef(0)
+  const startX     = useRef(0)
   const scrollLeft = useRef(0)
-  const velocity = useRef(0)
-  const lastX = useRef(0)
-  const rafId = useRef(null)
+  const velocity   = useRef(0)
+  const lastX      = useRef(0)
+  const rafId      = useRef(null)
+
+  const [tooltip, setTooltip] = useState(null)
   const daysLeft = getRaceCountdown()
+  // useMemo so nowX is stable — a changing value would re-run the scroll-init effect on every tooltip update.
+  const nowX = useMemo(() => dateToX(new Date()), [])
 
   const stopMomentum = useCallback(() => {
     if (rafId.current) cancelAnimationFrame(rafId.current)
   }, [])
 
   const applyMomentum = useCallback(() => {
-    const track = trackRef.current
-    if (!track) return
+    const el = trackRef.current
+    if (!el) return
     velocity.current *= 0.94
-    track.scrollLeft -= velocity.current
+    el.scrollLeft -= velocity.current
     if (Math.abs(velocity.current) > 0.5) {
       rafId.current = requestAnimationFrame(applyMomentum)
     }
   }, [])
 
+  // Drag-to-scroll + momentum
   useEffect(() => {
-    const track = trackRef.current
-    if (!track) return
+    const el = trackRef.current
+    if (!el) return
 
-    // Start near "NOW" entry (roughly center-ish)
-    track.scrollLeft = 600
+    el.scrollLeft = nowX - el.clientWidth * 0.6
 
-    const onMouseDown = (e) => {
+    const onDown = (e) => {
       isDragging.current = true
-      startX.current = e.pageX - track.offsetLeft
-      scrollLeft.current = track.scrollLeft
-      lastX.current = e.pageX
-      velocity.current = 0
+      startX.current     = e.pageX - el.offsetLeft
+      scrollLeft.current = el.scrollLeft
+      lastX.current      = e.pageX
+      velocity.current   = 0
       stopMomentum()
     }
-
-    const onMouseMove = (e) => {
+    const onMove = (e) => {
       if (!isDragging.current) return
       e.preventDefault()
-      const x = e.pageX - track.offsetLeft
-      const walk = x - startX.current
-      track.scrollLeft = scrollLeft.current - walk
+      el.scrollLeft    = scrollLeft.current - (e.pageX - el.offsetLeft - startX.current)
       velocity.current = lastX.current - e.pageX
-      lastX.current = e.pageX
+      lastX.current    = e.pageX
     }
-
-    const onMouseUp = () => {
+    const onUp = () => {
       if (!isDragging.current) return
       isDragging.current = false
       rafId.current = requestAnimationFrame(applyMomentum)
     }
-
     const onTouchStart = (e) => {
       isDragging.current = true
-      startX.current = e.touches[0].pageX - track.offsetLeft
-      scrollLeft.current = track.scrollLeft
-      lastX.current = e.touches[0].pageX
-      velocity.current = 0
+      startX.current     = e.touches[0].pageX - el.offsetLeft
+      scrollLeft.current = el.scrollLeft
+      lastX.current      = e.touches[0].pageX
+      velocity.current   = 0
       stopMomentum()
     }
-
     const onTouchMove = (e) => {
       if (!isDragging.current) return
-      const x = e.touches[0].pageX - track.offsetLeft
-      const walk = x - startX.current
-      track.scrollLeft = scrollLeft.current - walk
+      el.scrollLeft    = scrollLeft.current - (e.touches[0].pageX - el.offsetLeft - startX.current)
       velocity.current = lastX.current - e.touches[0].pageX
-      lastX.current = e.touches[0].pageX
+      lastX.current    = e.touches[0].pageX
     }
-
     const onTouchEnd = () => {
       isDragging.current = false
       rafId.current = requestAnimationFrame(applyMomentum)
     }
 
-    track.addEventListener('mousedown', onMouseDown)
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', onMouseUp)
-    track.addEventListener('touchstart', onTouchStart, { passive: true })
-    track.addEventListener('touchmove', onTouchMove, { passive: true })
-    track.addEventListener('touchend', onTouchEnd)
+    el.addEventListener('mousedown', onDown)
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove,   { passive: true })
+    el.addEventListener('touchend', onTouchEnd)
 
     return () => {
-      track.removeEventListener('mousedown', onMouseDown)
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
-      track.removeEventListener('touchstart', onTouchStart)
-      track.removeEventListener('touchmove', onTouchMove)
-      track.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('mousedown', onDown)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
       stopMomentum()
     }
-  }, [applyMomentum, stopMomentum])
+  }, [applyMomentum, stopMomentum, nowX])
+
+  // Track cursor for tooltip repositioning
+  useEffect(() => {
+    const onMove = (e) =>
+      setTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [])
+
+  const startYear = EPOCH_DATE.getFullYear()
+  const endYear   = END_DATE.getFullYear()
+  const years     = Array.from({ length: endYear - startYear }, (_, i) => startYear + i)
 
   return (
     <section id="timeline" className={styles.section} aria-label="Timeline">
@@ -195,59 +170,175 @@ export default function Timeline() {
 
       <div
         className={styles.trackWrapper}
+        ref={trackRef}
         role="region"
         aria-label="Draggable timeline"
       >
-        <div className={styles.track} ref={trackRef}>
-          {ENTRIES.map((entry, i) => (
-            <TimelineNode
-              key={entry.id}
-              entry={entry}
+        <div className={styles.canvas} style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+
+          {/* Axis */}
+          <div className={styles.axis} style={{ top: AXIS_Y }} />
+
+          {/* Year ruler */}
+          {years.map(year => <YearMarker key={year} year={year} />)}
+
+          {/* NOW marker */}
+          <div className={styles.nowMarker} style={{ left: nowX, top: AXIS_Y }}>
+            <div className={styles.nowDot} />
+            <span className={styles.nowLabel}>Now</span>
+          </div>
+
+          {/* Events */}
+          {EVENTS.map(event => (
+            <EventSpan
+              key={event.id}
+              event={event}
               daysLeft={daysLeft}
+              onTooltip={setTooltip}
             />
           ))}
         </div>
       </div>
 
+      {/* Legend */}
       <div className={styles.legend} aria-label="Timeline legend">
-        {Object.entries(TYPE_COLORS).map(([type, color]) => (
-          <div key={type} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ background: color }} aria-hidden="true" />
-            <span style={{ textTransform: 'capitalize' }}>{type}</span>
+        {LEGEND_CATEGORIES.map(cat => (
+          <div key={cat} className={styles.legendItem}>
+            <span
+              className={styles.legendSwatch}
+              style={{ background: CATEGORY_COLORS[cat] }}
+              aria-hidden="true"
+            />
+            <span>{CATEGORY_LABELS[cat]}</span>
           </div>
         ))}
       </div>
+
+      {tooltip && createPortal(
+        <TooltipCard tooltip={tooltip} />,
+        document.body
+      )}
     </section>
   )
 }
 
-function TimelineNode({ entry, daysLeft }) {
-  const isAbove = entry.position === 'above'
-  const nodeClass = [
-    styles.node,
-    entry.isFuture ? styles.future : '',
-    entry.isPlaceholder ? styles.nodePlaceholder : '',
-    entry.isEasterEgg ? styles.easterEgg : '',
+// ─── YearMarker ───────────────────────────────────────────────────────────────
+
+function YearMarker({ year }) {
+  const x        = dateToX(new Date(year, 0, 1))
+  const isDecade = year % 10 === 0
+  return (
+    <div
+      className={`${styles.yearMarker} ${isDecade ? styles.yearDecade : ''}`}
+      style={{ left: x, top: AXIS_Y }}
+      aria-hidden="true"
+    >
+      <div className={styles.yearTick} />
+      <span className={styles.yearLabel}>{year}</span>
+    </div>
+  )
+}
+
+// ─── EventSpan ────────────────────────────────────────────────────────────────
+//
+// Each event renders three absolutely-positioned elements:
+//   1. labelLine  — thin vertical connector from label to the span
+//   2. span       — the coloured horizontal line near the axis
+//   3. eventLabel — plain coloured text floating above/below
+
+function EventSpan({ event, daysLeft, onTooltip }) {
+  const color   = CATEGORY_COLORS[event.category]
+  const x       = dateToX(new Date(event.start))
+  const endDate = event.end ? new Date(event.end) : new Date()
+  const spanW   = Math.max(dateToX(endDate) - x, MIN_SPAN_W)
+  const midX    = x + spanW / 2
+
+  const spanTop = SPAN_TOP[event.track]
+  const labelCY = LABEL_CY[event.track]
+  const isAbove = event.track.startsWith('above')
+
+  // Connector top and height
+  const connTop = isAbove ? labelCY + LABEL_HALF : spanTop + SPAN_H
+  const connH   = isAbove
+    ? spanTop - (labelCY + LABEL_HALF)
+    : (labelCY - LABEL_HALF) - (spanTop + SPAN_H)
+
+  const showTooltip = (e) => onTooltip({ event, x: e.clientX, y: e.clientY })
+  const hideTooltip = ()   => onTooltip(null)
+
+  const spanCls = [
+    styles.span,
+    event.isFuture    ? styles.spanFuture : '',
+    event.isEasterEgg ? styles.spanEgg    : '',
   ].filter(Boolean).join(' ')
 
-  const dotClass = [
-    styles.dot,
-    styles[entry.type] || '',
-    entry.type === 'now' ? styles.now : '',
+  const labelCls = [
+    styles.eventLabel,
+    event.isFuture      ? styles.labelFuture      : '',
+    event.isPlaceholder ? styles.labelPlaceholder : '',
+    event.isEasterEgg   ? styles.labelEgg         : '',
   ].filter(Boolean).join(' ')
 
   return (
-    <div className={nodeClass} aria-label={`${entry.label}, ${entry.date}`}>
-      <div className={`${styles.nodeContent} ${isAbove ? styles.above : styles.below}`}>
-        <p className={styles.nodeLabel}>{entry.label}</p>
-        <p className={styles.nodeDate}>{entry.date}</p>
-        {entry.type === 'now' && <p className={styles.nowLabel}>Now</p>}
-        {entry.showCountdown && (
-          <p className={styles.nodeCountdown}>{daysLeft}d to race</p>
-        )}
-      </div>
+    <>
+      {/* Connector */}
+      <div
+        className={styles.labelLine}
+        style={{ left: midX, top: connTop, height: Math.max(connH, 0), background: color }}
+        aria-hidden="true"
+      />
 
-      <div className={dotClass} aria-hidden="true" />
+      {/* Span line near axis */}
+      <div
+        className={spanCls}
+        style={{ left: x, top: spanTop, width: spanW, '--span-color': color }}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+        aria-hidden="true"
+      />
+
+      {/* Label text */}
+      <span
+        className={labelCls}
+        style={{ left: midX, top: labelCY - LABEL_HALF, color }}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+        aria-label={`${event.label} — ${CATEGORY_LABELS[event.category] ?? event.category}`}
+      >
+        {event.label}
+        {event.showCountdown && daysLeft != null && (
+          <span className={styles.countdown}> · {daysLeft}d</span>
+        )}
+      </span>
+    </>
+  )
+}
+
+// ─── TooltipCard ──────────────────────────────────────────────────────────────
+
+function TooltipCard({ tooltip }) {
+  const { event, x, y } = tooltip
+  const color      = CATEGORY_COLORS[event.category]
+  const startLabel = fmtDate(event.start)
+  const endLabel   = fmtDate(event.end)
+  const dateRange  = event.start === event.end ? startLabel : `${startLabel} → ${endLabel}`
+
+  return (
+    <div
+      className={styles.tooltip}
+      style={{ position: 'fixed', left: x + 14, top: y - 14, transform: 'translateY(-100%)', pointerEvents: 'none', zIndex: 9999 }}
+      role="tooltip"
+    >
+      <div className={styles.tooltipHeader} style={{ borderLeftColor: color }}>
+        <strong className={styles.tooltipName}>{event.label}</strong>
+        <span className={styles.tooltipCat} style={{ color }}>
+          {CATEGORY_LABELS[event.category]}
+        </span>
+      </div>
+      <div className={styles.tooltipDate}>{dateRange}</div>
+      {event.description && (
+        <p className={styles.tooltipDesc}>{event.description}</p>
+      )}
     </div>
   )
 }

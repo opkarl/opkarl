@@ -73,7 +73,6 @@
   font-size: 12px;
   color: var(--accent);
   font-family: var(--font-heading);
-  /* manually updated */
 }
 
 @media (max-width: 480px) {

@@ -1,20 +1,8 @@
-import { useRef, useEffect, useState } from 'react'
 import styles from './SportDivider.module.css'
+import { useVisible } from '../hooks/useVisible'
 
 export default function RunDivider() {
-  const ref = useRef(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect() } },
-      { threshold: 0.2 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
+  const [ref, visible] = useVisible()
 
   return (
     <div
@@ -28,25 +16,21 @@ export default function RunDivider() {
           <circle cx="65" cy="14" r="8" fill="#1d9e75" />
           <line x1="65" y1="22" x2="62" y2="48" stroke="#1d9e75" strokeWidth="4" strokeLinecap="round" />
 
-          {/* Back arm: shoulder (65,28) is top-right of its fill-box → 100% 0% */}
           <g className={styles.runArmBack}>
             <line x1="65" y1="28" x2="50" y2="38" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
             <line x1="50" y1="38" x2="44" y2="34" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
           </g>
 
-          {/* Front arm: shoulder (65,28) is top-left of its fill-box → 0% 0% */}
           <g className={styles.runArmFront}>
             <line x1="65" y1="28" x2="78" y2="35" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
             <line x1="78" y1="35" x2="84" y2="30" stroke="#1d9e75" strokeWidth="3" strokeLinecap="round" />
           </g>
 
-          {/* Back leg: hip (62,48) is top-right of its fill-box → 100% 0% */}
           <g className={styles.runLegBack}>
             <line x1="62" y1="48" x2="50" y2="64" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
             <line x1="50" y1="64" x2="42" y2="76" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
           </g>
 
-          {/* Front leg: hip (62,48) is top-left of its fill-box → 0% 0% */}
           <g className={styles.runLegFront}>
             <line x1="62" y1="48" x2="74" y2="60" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
             <line x1="74" y1="60" x2="80" y2="74" stroke="#1d9e75" strokeWidth="3.5" strokeLinecap="round" />
