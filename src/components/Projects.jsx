@@ -1,12 +1,25 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useFadeIn } from '../hooks/useFadeIn'
 import styles from './Projects.module.css'
 import Pathfinder from './pathfinder/Pathfinder'
 import SortingVisualizer from './sorting/SortingVisualizer'
+import WordleSolver from './wordle/WordleSolver'
+
+const FADE_MS = 180
 
 const DEMOS = [
-  { label: 'Pathfinding', component: <Pathfinder /> },
-  { label: 'Sorting',     component: <SortingVisualizer /> },
+  {
+    label: 'Pathfinding',
+    title: 'Pathfinding Visualizer',
+    desc: 'Draw walls on a grid, set start/end, watch A*, BFS, or DFS find the route in real time. Switch algorithms and see the difference visually.',
+    component: <Pathfinder />,
+  },
+  {
+    label: 'Sorting',
+    title: 'Sorting Visualizer',
+    desc: 'Pick bubble, insertion, or quicksort and watch it race through a shuffled array — bar by bar, swap by swap.',
+    component: <SortingVisualizer />,
+  },
 ]
 
 // if you're reading this, you're exactly the kind of person i want to work with.
@@ -14,8 +27,8 @@ const DEMOS = [
 const PROJECTS = [
   {
     index: '01',
-    title: 'Pathfinding Visualizer',
-    desc: 'Draw walls on a grid, set start/end, watch A* or Dijkstra find the route in real time. Switch algorithms and see the difference visually.',
+    title: null, // driven by DEMOS[demoIndex]
+    desc: null,
     result: 'Flagship — live demo embedded below',
     tags: ['Algorithm', 'Interactive', 'Visualization'],
     url: null,
@@ -38,6 +51,7 @@ const PROJECTS = [
     result: '2nd place in class',
     tags: ['Algorithm', 'Search', 'Optimization'],
     url: null,
+    showWordle: true,
     icon: '◻',
   },
   {
@@ -56,8 +70,19 @@ const ALL_TAGS = [...new Set(PROJECTS.flatMap(p => p.tags))]
 export default function Projects() {
   const [activeTag, setActiveTag] = useState(null)
   const [demoIndex, setDemoIndex] = useState(0)
+  const [displayedDemoIndex, setDisplayedDemoIndex] = useState(0)
+  const [demoTextFading, setDemoTextFading] = useState(false)
   const ref = useRef(null)
   useFadeIn(ref)
+
+  const changeDemoIndex = useCallback((next) => {
+    setDemoTextFading(true)
+    setDemoIndex(next)
+    setTimeout(() => {
+      setDisplayedDemoIndex(next)
+      setDemoTextFading(false)
+    }, FADE_MS)
+  }, [])
 
   const handleRowClick = (project) => {
     if (project.url) {
@@ -76,8 +101,10 @@ export default function Projects() {
         <p className={`${styles.label} fade-up`}>Projects</p>
 
         <div className={styles.list}>
-          {PROJECTS.map((project, i) => {
+          {PROJECTS.map((project) => {
             const isDimmed = activeTag && !project.tags.includes(activeTag)
+            const title = project.showVisualizer ? DEMOS[displayedDemoIndex].title : project.title
+            const desc  = project.showVisualizer ? DEMOS[displayedDemoIndex].desc  : project.desc
             return (
               <div key={project.index}>
                 <div
@@ -85,14 +112,18 @@ export default function Projects() {
                   onClick={() => handleRowClick(project)}
                   role="button"
                   tabIndex={0}
-                  aria-label={`Open ${project.title}`}
+                  aria-label={`Open ${title}`}
                   onKeyDown={e => e.key === 'Enter' && handleRowClick(project)}
                 >
                   <span className={styles.index}>{project.index}</span>
 
                   <div className={styles.meta}>
-                    <p className={styles.title}>{project.title}</p>
-                    <p className={styles.desc}>{project.desc}</p>
+                    <p className={`${styles.title} ${project.showVisualizer && demoTextFading ? styles.textFading : ''}`}>
+                      {title}
+                    </p>
+                    <p className={`${styles.desc} ${project.showVisualizer && demoTextFading ? styles.textFading : ''}`}>
+                      {desc}
+                    </p>
                     <p className={styles.result}>{project.result}</p>
                     <div className={styles.tags}>
                       {project.tags.map(tag => (
@@ -114,11 +145,21 @@ export default function Projects() {
                   </div>
                 </div>
 
+                {project.showWordle && (
+                  <div className={`${styles.demoStandalone} fade-up`}>
+                    <div className={styles.demoWindow}>
+                      <div className={styles.demoSlide}>
+                        <WordleSolver />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {project.showVisualizer && (
                   <div className={`${styles.demoCarousel} fade-up`}>
                     <button
                       className={styles.demoArrow}
-                      onClick={() => setDemoIndex(i => (i - 1 + DEMOS.length) % DEMOS.length)}
+                      onClick={() => changeDemoIndex((demoIndex - 1 + DEMOS.length) % DEMOS.length)}
                       aria-label="Previous demo"
                     >
                       ‹
@@ -139,7 +180,7 @@ export default function Projects() {
                           <button
                             key={di}
                             className={`${styles.demoDot} ${demoIndex === di ? styles.demoDotActive : ''}`}
-                            onClick={() => setDemoIndex(di)}
+                            onClick={() => changeDemoIndex(di)}
                             aria-label={`Switch to ${demo.label}`}
                           />
                         ))}
@@ -147,7 +188,7 @@ export default function Projects() {
                     </div>
                     <button
                       className={styles.demoArrow}
-                      onClick={() => setDemoIndex(i => (i + 1) % DEMOS.length)}
+                      onClick={() => changeDemoIndex((demoIndex + 1) % DEMOS.length)}
                       aria-label="Next demo"
                     >
                       ›
